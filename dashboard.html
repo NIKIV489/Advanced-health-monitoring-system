@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Advanced System Health Monitor</title>
+
+    <meta http-equiv="refresh" content="3">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0f172a;
+            color: #e5e7eb;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #38bdf8;
+        }
+
+        h2 {
+            margin-top: 30px;
+            color: #a5b4fc;
+        }
+
+        .info-box {
+            background: #020617;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .status {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: #020617;
+            padding: 20px;
+            border-radius: 12px;
+            width: 250px;
+            text-align: center;
+            box-shadow: 0 0 10px #000;
+        }
+
+        .high { color: #ef4444; font-weight: bold; }
+        .normal { color: #22c55e; font-weight: bold; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #334155;
+            text-align: left;
+        }
+
+        th {
+            background-color: #020617;
+            color: #38bdf8;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover { background-color: #1e293b; }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Advanced System Health Monitoring Dashboard</h1>
+<p style="text-align:center;">Last Updated: {{ time }}</p>
+
+<div class="info-box">
+    <strong>OS:</strong> {{ info.os }} {{ info.version }} <br>
+    <strong>Machine:</strong> {{ info.machine }} <br>
+    <strong>Processor:</strong> {{ info.processor }}
+</div>
+
+<h2>System Status</h2>
+<div class="status">
+    <div class="card">
+        <h3>CPU Usage</h3>
+        <p class="{{ 'high' if status.cpu > 80 else 'normal' }}">
+            {{ status.cpu }} %
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>RAM Usage</h3>
+        <p class="{{ 'high' if status.ram > 80 else 'normal' }}">
+            {{ status.ram }} %
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>Battery</h3>
+        {% if status.battery is not none %}
+            <p>{{ status.battery }} %</p>
+            <p>{{ 'Charging' if status.charging else 'Not Charging' }}</p>
+        {% else %}
+            <p>N/A</p>
+        {% endif %}
+    </div>
+</div>
+
+<h2>All Running Processes (High → Low CPU)</h2>
+<table>
+    <tr>
+        <th>PID</th>
+        <th>Process Name</th>
+        <th>CPU %</th>
+    </tr>
+
+    {% for p in status.processes %}
+    <tr>
+        <td>{{ p.pid }}</td>
+        <td>{{ p.name }}</td>
+        <td class="{{ 'high' if p.cpu_percent > 80 else 'normal' }}">
+            {{ p.cpu_percent }}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<div class="footer">
+    © Advanced System Health Monitor | Built with Python & Flask
+</div>
+
+</body>
+</html>
